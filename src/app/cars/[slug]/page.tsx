@@ -22,12 +22,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const car = cars.find((c) => c.slug === slug)
   if (!car) return {}
   return {
-    title: `${car.name} (${car.year}) – ${car.make} ${car.model}`,
+    title: `${car.name} (${car.year}) – ${car.make} ${car.model} | ${SITE_NAME}`,
     description: car.description,
+    keywords: [car.make, car.model, String(car.year), ...car.appearances.map((a) => a.title), "movie cars", "iconic vehicles"],
     openGraph: {
+      type: "website",
       title: `${car.name} – ${SITE_NAME}`,
       description: car.description,
       url: `${SITE_URL}/cars/${car.slug}`,
+      images: car.image ? [{ url: `${SITE_URL}${car.image}`, alt: car.name }] : car.imageUrl ? [{ url: car.imageUrl, alt: car.name }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${car.name} – ${SITE_NAME}`,
+      description: car.description,
+      images: car.image ? [`${SITE_URL}${car.image}`] : car.imageUrl ? [car.imageUrl] : [],
     },
     alternates: {
       canonical: `${SITE_URL}/cars/${car.slug}`,
@@ -65,6 +74,7 @@ export default async function CarDetailPage({ params }: Props) {
     { label: "Drivetrain", value: car.specs.drivetrain, icon: Shield },
     { label: "Top Speed", value: car.specs.topSpeed ? `${car.specs.topSpeed} mph` : undefined, icon: Zap },
     { label: "0–60 mph", value: car.specs.zeroToSixty ? `${car.specs.zeroToSixty}s` : undefined, icon: Gauge },
+    { label: "Weight", value: car.specs.weight ? `${car.specs.weight} lbs` : undefined, icon: Shield },
   ]
 
   return (
@@ -85,6 +95,9 @@ export default async function CarDetailPage({ params }: Props) {
             productionDate: car.year,
             bodyType: car.bodyType,
             brand: { "@type": "Brand", name: car.make },
+            ...(car.specs.horsepower ? { power: `${car.specs.horsepower} HP` } : {}),
+            ...(car.specs.topSpeed ? { speed: `${car.specs.topSpeed} mph` } : {}),
+            ...(car.specs.weight ? { weight: `${car.specs.weight} lbs` } : {}),
           }),
         }}
       />
@@ -105,7 +118,9 @@ export default async function CarDetailPage({ params }: Props) {
             <div className="bg-gradient-to-br from-surface-light via-surface to-surface aspect-[21/9] flex items-center justify-center relative">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(220,38,38,0.1)_0%,transparent_60%)]" />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(245,158,11,0.06)_0%,transparent_60%)]" />
-              {car.imageUrl
+              {car.image
+                ? <img src={car.image} alt={car.name} className="relative z-10 h-full w-full object-contain p-4" />
+                : car.imageUrl
                 ? <img src={car.imageUrl} alt={car.name} className="relative z-10 h-full w-full object-contain p-4" />
                 : <div className="relative z-10 text-center">
                     <Car className="mx-auto h-24 w-24 text-primary/30" />

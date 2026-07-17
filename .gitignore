@@ -39,3 +39,27 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# downloaded car images (regenerate via: node scripts/download-images.cjs)
+/public/images/cars/
+
+# local scrape cache / logs
+data/wikipedia-specs-log.txt
+data/download-images-log.txt
+data/imcdb-partial-*.json
+data/wikipedia-scrape.log
+data/scraped-vehicles-*.json
+data/imcdb-scrape-*.json
+data/imcdb-*.csv
+data/imcdb-1784019*.json
+data/imcdb-1784020*.json
+data/imcdb-1784021518684.json
+data/imcdb-1784020137059.json
+
+# test/scratch scripts
+scripts/test-*.mjs
+scripts/test-*.cjs
+scripts/cleanup-*.cjs
+scripts/wikipedia-funfacts.cjs
+scripts/wikipedia-specs.cjs.bak
+

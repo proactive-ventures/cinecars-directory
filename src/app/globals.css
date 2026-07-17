@@ -5,17 +5,30 @@
 @theme inline {
   --color-background: #0a0a0a;
   --color-foreground: #f5f5f5;
+  --color-card: #18181b;
+  --color-card-foreground: #f5f5f5;
+  --color-popover: #18181b;
+  --color-popover-foreground: #f5f5f5;
   --color-primary: #dc2626;
   --color-primary-dark: #991b1b;
   --color-primary-light: #ef4444;
+  --color-primary-foreground: #ffffff;
   --color-secondary: #f59e0b;
   --color-secondary-dark: #b45309;
+  --color-secondary-foreground: #ffffff;
   --color-accent: #eab308;
+  --color-accent-foreground: #ffffff;
+  --color-muted: #a1a1aa;
+  --color-muted-foreground: #a1a1aa;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #27272a;
+  --color-input: #27272a;
+  --color-ring: #dc2626;
   --color-surface: #18181b;
   --color-surface-light: #27272a;
   --color-surface-lighter: #3f3f46;
-  --color-muted: #a1a1aa;
-  --color-border: #27272a;
+  --radius: 0.5rem;
 
   --font-heading: "Oswald", sans-serif;
   --font-body: "Inter", sans-serif;

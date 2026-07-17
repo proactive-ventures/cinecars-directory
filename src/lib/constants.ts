@@ -1,6 +1,6 @@
 export const SITE_NAME = "CineCars Directory"
 export const SITE_TAGLINE = "Every Iconic Car from Movies & TV Series"
-export const SITE_DESCRIPTION = "The ultimate directory of iconic cars from movies and TV series. Explore 200+ legendary vehicles from Fast & Furious, James Bond, Batman, Knight Rider, and more. Complete specs, film appearances, and cultural impact."
+export const SITE_DESCRIPTION = "The ultimate directory of iconic vehicles from movies and TV series. Explore 7,000+ cars, trucks, motorcycles and more from Fast & Furious, James Bond, Batman, Knight Rider, and 100+ other films and shows. Complete specs, film appearances, and cultural impact."
 export const SITE_URL = "https://cinecars.directory"
 export const SITE_LOCALE = "en_US"
 
@@ -21,19 +21,21 @@ export const decades = [
 ] as const
 
 export const bodyTypes = [
+  "Coupe",
+  "Convertible",
+  "Sedan",
+  "Wagon",
   "Sports Car",
   "Muscle Car",
   "Supercar",
-  "Sedan",
-  "Coupe",
-  "Convertible",
+  "Hypercar",
   "SUV",
   "Truck",
-  "Wagon",
-  "Hatchback",
-  "Concept Car",
   "Van",
-  "Military",
+  "Motorcycle",
+  "Race Car",
+  "Concept Car",
+  "Vintage Car",
 ] as const
 
 export const mediaTypes = [
