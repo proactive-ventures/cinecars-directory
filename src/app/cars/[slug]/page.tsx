@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
+import { existsSync } from "fs"
+import path from "path"
 import {
   Calendar, Gauge, Cpu, Cog, Car, Shield, Zap, ChevronRight,
   Film, Tv, Lightbulb, Sparkles,
@@ -8,6 +10,13 @@ import {
 import { cars } from "@/data/cars"
 import { SITE_NAME, SITE_URL } from "@/lib/constants"
 import CarCard from "@/components/CarCard"
+
+function resolveImage(car: { image?: string; imageUrl?: string }): string | undefined {
+  if (car.image && existsSync(path.join(process.cwd(), "public", car.image))) {
+    return car.image
+  }
+  return car.imageUrl
+}
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -21,6 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const car = cars.find((c) => c.slug === slug)
   if (!car) return {}
+  const ogImage = resolveImage(car)
   return {
     title: `${car.name} (${car.year}) – ${car.make} ${car.model} | ${SITE_NAME}`,
     description: car.description,
@@ -30,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${car.name} – ${SITE_NAME}`,
       description: car.description,
       url: `${SITE_URL}/cars/${car.slug}`,
-      images: car.image ? [{ url: `${SITE_URL}${car.image}`, alt: car.name }] : car.imageUrl ? [{ url: car.imageUrl, alt: car.name }] : [],
+      images: ogImage ? [{ url: ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`, alt: car.name }] : [],
     },
     twitter: {
       card: "summary_large_image",
@@ -118,10 +128,8 @@ export default async function CarDetailPage({ params }: Props) {
             <div className="bg-gradient-to-br from-surface-light via-surface to-surface aspect-[21/9] flex items-center justify-center relative">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(220,38,38,0.1)_0%,transparent_60%)]" />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(245,158,11,0.06)_0%,transparent_60%)]" />
-              {car.image
-                ? <img src={car.image} alt={car.name} className="relative z-10 h-full w-full object-contain p-4" />
-                : car.imageUrl
-                ? <img src={car.imageUrl} alt={car.name} className="relative z-10 h-full w-full object-contain p-4" />
+              {resolveImage(car)
+                ? <img src={resolveImage(car)} alt={car.name} className="relative z-10 h-full w-full object-contain p-4" />
                 : <div className="relative z-10 text-center">
                     <Car className="mx-auto h-24 w-24 text-primary/30" />
                     <p className="mt-4 text-sm text-muted">Image coming soon</p>

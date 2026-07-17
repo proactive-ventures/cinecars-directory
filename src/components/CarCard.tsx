@@ -27,6 +27,7 @@ export default function CarCard({ car, index = 0 }: CarCardProps) {
     .toUpperCase()
 
   const imgSrc = car.image || car.imageUrl
+  const fallbackSrc = car.imageUrl && car.imageUrl !== car.image ? car.imageUrl : null
 
   const mediaIcons = {
     movie: <Film className="h-3 w-3" />,
@@ -61,6 +62,11 @@ export default function CarCard({ car, index = 0 }: CarCardProps) {
                     alt={car.name}
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
+                    onError={(e) => {
+                      if (fallbackSrc && (e.currentTarget as HTMLImageElement).src !== fallbackSrc) {
+                        e.currentTarget.src = fallbackSrc
+                      }
+                    }}
                   />
                 ) : (
                   <span className="font-heading text-5xl font-bold tracking-wider text-white/20">
@@ -93,10 +99,10 @@ export default function CarCard({ car, index = 0 }: CarCardProps) {
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-1.5">
-                  {car.appearances.slice(0, 3).map((appearance) => {
+                  {car.appearances.slice(0, 3).map((appearance, appIdx) => {
                     const Icon = mediaIcons[appearance.mediaType] || Film
                     return (
-                      <Tooltip key={appearance.title}>
+                      <Tooltip key={`front-${appIdx}`}>
                         <TooltipTrigger asChild>
                           <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
                             {Icon}
@@ -195,10 +201,10 @@ export default function CarCard({ car, index = 0 }: CarCardProps) {
               <div className="mt-2">
                 <p className="text-[11px] font-medium text-muted-foreground mb-1">Appears in</p>
                 <div className="flex flex-wrap gap-1">
-                  {car.appearances.slice(0, 4).map((app) => {
+                  {car.appearances.slice(0, 4).map((app, appIdx) => {
                     const Icon = mediaIcons[app.mediaType] || Film
                     return (
-                      <Tooltip key={app.title}>
+                      <Tooltip key={`back-${appIdx}`}>
                         <TooltipTrigger asChild>
                           <Badge variant="outline" className="gap-1 text-[11px] px-2 py-0.5 text-primary border-primary/20 cursor-default">
                             {Icon}
