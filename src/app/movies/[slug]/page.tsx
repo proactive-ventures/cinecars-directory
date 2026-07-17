@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${movie.title} – ${SITE_NAME}`,
       description: movie.description,
       url: `${SITE_URL}/movies/${movie.slug}`,
+      ...(movie.image ? { images: [{ url: `${SITE_URL}${movie.image}` }] } : {}),
     },
     alternates: {
       canonical: `${SITE_URL}/movies/${movie.slug}`,
@@ -89,10 +90,20 @@ export default async function MovieDetailPage({ params }: Props) {
         {/* Hero */}
         <section className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="overflow-hidden rounded-2xl border border-border/50">
-            <div className="aspect-[21/9] bg-gradient-to-br from-surface-light via-surface to-surface flex items-center justify-center relative">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(220,38,38,0.1)_0%,transparent_60%)]" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(245,158,11,0.06)_0%,transparent_60%)]" />
-              <Film className="relative z-10 h-24 w-24 text-primary/30" />
+            <div className="relative aspect-[21/9] bg-gradient-to-br from-surface-light via-surface to-surface flex items-center justify-center">
+              {movie.image && (
+                <img
+                  src={movie.image}
+                  alt={`${movie.title} (${movie.year})`}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              )}
+              <div className="img-scrim pointer-events-none absolute inset-0" />
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(220,38,38,0.12)_0%,transparent_60%)]" />
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(245,158,11,0.08)_0%,transparent_60%)]" />
+              {!movie.image && (
+                <Film className="relative z-10 h-24 w-24 text-primary/30" />
+              )}
             </div>
           </div>
         </section>

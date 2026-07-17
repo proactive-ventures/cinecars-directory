@@ -62,9 +62,22 @@ export default function TVSeriesPage() {
               href={`/tv-series/${series.slug}`}
               className="group glass rounded-xl border border-border/50 overflow-hidden transition-all hover:border-primary/30 hover:shadow-[0_0_20px_rgba(220,38,38,0.15)]"
             >
-              <div className="aspect-[16/9] bg-gradient-to-br from-surface-light via-surface to-surface flex items-center justify-center relative">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.08)_0%,transparent_60%)]" />
-                <Tv className="relative z-10 h-12 w-12 text-primary/30 group-hover:text-primary/50 transition-colors" />
+              <div className="relative aspect-[16/9] flex items-center justify-center overflow-hidden">
+                {series.image && (
+                  <img
+                    src={series.image}
+                    alt={series.title}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                )}
+                <div className="img-scrim pointer-events-none absolute inset-0" />
+                {!series.image && (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-br from-surface-light via-surface to-surface" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.08)_0%,transparent_60%)]" />
+                    <Tv className="relative z-10 h-12 w-12 text-primary/30 group-hover:text-primary/50 transition-colors" />
+                  </>
+                )}
               </div>
               <div className="p-5">
                 <h2 className="font-heading text-xl font-bold text-white group-hover:text-primary transition-colors">
