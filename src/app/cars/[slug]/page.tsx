@@ -10,6 +10,7 @@ import {
 import { cars } from "@/data/cars"
 import { SITE_NAME, SITE_URL } from "@/lib/constants"
 import CarCard from "@/components/CarCard"
+import { getImageAttribution } from "@/lib/imageAttribution"
 
 function resolveImage(car: { image?: string; imageUrl?: string }): string | undefined {
   if (car.image && existsSync(path.join(process.cwd(), "public", car.image))) {
@@ -72,6 +73,8 @@ export default async function CarDetailPage({ params }: Props) {
   ).slice(0, 4)
 
   const decade = `${Math.floor(car.year / 10) * 10}s`
+
+  const attribution = getImageAttribution(resolveImage(car))
 
   const specs: { label: string; value: string | number | undefined; icon: React.ComponentType<{ className?: string }> }[] = [
     { label: "Year", value: car.year, icon: Calendar },
@@ -138,6 +141,16 @@ export default async function CarDetailPage({ params }: Props) {
             </div>
           </div>
         </section>
+
+        <div className="mx-auto max-w-7xl px-4 pb-2 sm:px-6 lg:px-8">
+          <p className="text-xs text-muted">
+            Image: {attribution.source}
+            {attribution.sourceUrl
+              ? <>(<Link href={attribution.sourceUrl} className="underline hover:text-foreground" target="_blank" rel="noopener noreferrer">{attribution.sourceUrl.includes("commons") ? "source" : "website"}</Link>)</>
+              : null}. {attribution.license}
+            {attribution.note ? `. ${attribution.note}` : ""}
+          </p>
+        </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-between">

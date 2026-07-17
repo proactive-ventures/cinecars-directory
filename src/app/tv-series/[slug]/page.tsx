@@ -6,6 +6,7 @@ import CarCard from "@/components/CarCard"
 import { tvSeries } from "@/data/tv-series"
 import { cars } from "@/data/cars"
 import { SITE_NAME, SITE_URL } from "@/lib/constants"
+import { getImageAttribution } from "@/lib/imageAttribution"
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -46,6 +47,8 @@ export default async function TVSeriesDetailPage({ params }: Props) {
         (a.mediaType === "tv-series" || a.mediaType === "animated-series"),
     ),
   )
+
+  const attribution = getImageAttribution(series.image)
 
   return (
     <>
@@ -106,6 +109,18 @@ export default async function TVSeriesDetailPage({ params }: Props) {
             </div>
           </div>
         </section>
+
+        {series.image && (
+          <div className="mx-auto max-w-7xl px-4 pb-2 sm:px-6 lg:px-8">
+            <p className="text-xs text-muted">
+              Image: {attribution.source}
+              {attribution.sourceUrl
+                ? <>(<Link href={attribution.sourceUrl} className="underline hover:text-foreground" target="_blank" rel="noopener noreferrer">{attribution.sourceUrl.includes("commons") ? "source" : "website"}</Link>)</>
+                : null}. {attribution.license}
+              {attribution.note ? `. ${attribution.note}` : ""}
+            </p>
+          </div>
+        )}
 
         {/* Info */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
