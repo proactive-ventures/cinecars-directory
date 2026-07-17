@@ -26,14 +26,14 @@ export default function MakeCard({ make }: MakeCardProps) {
     >
       <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-secondary/20 via-surface to-primary/10">
         <div className="flex flex-col items-center gap-2">
-          <span className="font-heading text-5xl font-bold text-white/20">
+          <span className="font-heading text-5xl font-bold text-white">
             {initials}
           </span>
-          <span className="text-xs uppercase tracking-widest text-muted">
+          <span className="text-xs uppercase tracking-widest text-muted-foreground">
             {make.country || "Automotive"}
           </span>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
+        <div className="img-scrim pointer-events-none absolute inset-0" />
       </div>
 
       <div className="p-4">
@@ -42,7 +42,7 @@ export default function MakeCard({ make }: MakeCardProps) {
         </h3>
 
         {make.description && (
-          <p className="mt-1.5 text-sm leading-relaxed text-muted line-clamp-2">
+          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground line-clamp-2">
             {make.description}
           </p>
         )}

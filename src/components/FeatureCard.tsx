@@ -58,7 +58,7 @@ export default function FeatureCard({ car, index = 0 }: FeatureCardProps) {
                 <span className="font-heading text-7xl font-bold text-white/15">
                   {initials}
                 </span>
-                <span className="text-sm text-muted">{car.name}</span>
+                <span className="text-sm text-muted-foreground">{car.name}</span>
               </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/50 to-transparent" />
@@ -66,7 +66,7 @@ export default function FeatureCard({ car, index = 0 }: FeatureCardProps) {
 
           <div className="flex flex-col justify-center p-6 lg:p-8">
             {car.isFeatured && (
-              <span className="mb-3 flex w-fit items-center gap-1 rounded-full bg-secondary/20 px-3 py-1 text-xs font-medium text-secondary backdrop-blur-sm">
+              <span className="mb-3 flex w-fit items-center gap-1 rounded-full bg-background/80 px-3 py-1 text-xs font-semibold text-secondary backdrop-blur-sm">
                 <Star className="h-3 w-3 fill-secondary" />
                 Featured Vehicle
               </span>
@@ -76,12 +76,12 @@ export default function FeatureCard({ car, index = 0 }: FeatureCardProps) {
               {car.name}
             </h3>
 
-            <p className="mt-2 text-sm leading-relaxed text-muted line-clamp-2">
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
               {car.description ||
                 `Discover the iconic ${car.make} ${car.model} from ${car.year}.`}
             </p>
 
-            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted">
+            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-primary" />
                 {car.year}

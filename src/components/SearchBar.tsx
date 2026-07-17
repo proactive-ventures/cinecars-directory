@@ -31,17 +31,17 @@ export default function SearchBar({
       onSubmit={handleSubmit}
       className={cn("relative flex items-center", className)}
     >
-      <Search className="pointer-events-none absolute left-3.5 h-4 w-4 text-muted" />
+      <Search className="pointer-events-none absolute left-3.5 h-4 w-4 text-muted-foreground" />
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-border bg-surface py-3 pl-10 pr-4 text-sm text-foreground placeholder-muted transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        className="w-full rounded-xl border border-border bg-surface py-3 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground/70 transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
       />
       <button
         type="submit"
-        className="ml-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-dark"
+        className="ml-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-dark"
       >
         Search
       </button>

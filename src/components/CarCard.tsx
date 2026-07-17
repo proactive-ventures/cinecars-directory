@@ -49,18 +49,18 @@ export default function CarCard({ car, index = 0 }: CarCardProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05, duration: 0.4 }}
-        className="group perspective-[1000px] h-[420px]"
+        className="group perspective-1000 h-[420px]"
       >
-        <div className="relative h-full w-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+        <div className="flip-3d">
           {/* Front Face */}
-          <Card className="absolute inset-0 overflow-hidden [backface-visibility:hidden] border-border/50">
+          <Card className="flip-face overflow-hidden border-border/50">
             <Link href={`/cars/${car.slug}`} className="block h-full">
               <div className="relative flex h-48 items-center justify-center overflow-hidden bg-gradient-to-br from-primary/20 via-card to-secondary/10">
                 {imgSrc ? (
                   <img
                     src={imgSrc}
                     alt={car.name}
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     loading="lazy"
                     onError={(e) => {
                       if (fallbackSrc && (e.currentTarget as HTMLImageElement).src !== fallbackSrc) {
@@ -74,12 +74,12 @@ export default function CarCard({ car, index = 0 }: CarCardProps) {
                   </span>
                 )}
                 {car.isFeatured && (
-                  <span className="absolute right-2 top-2 flex items-center gap-1 rounded-full bg-secondary/20 px-2 py-1 text-xs font-medium text-secondary backdrop-blur-sm z-10">
-                    <Star className="h-3 w-3 fill-secondary" />
+                  <span className="absolute right-2 top-2 z-10 flex items-center gap-1 rounded-full bg-secondary px-2 py-1 text-xs font-semibold text-secondary-foreground shadow-md">
+                    <Star className="h-3 w-3 fill-secondary-foreground" />
                     Featured
                   </span>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                <div className="img-scrim pointer-events-none absolute inset-0" />
               </div>
 
               <CardContent className="p-4">
@@ -124,14 +124,14 @@ export default function CarCard({ car, index = 0 }: CarCardProps) {
                 </div>
               </CardContent>
 
-              <div className="absolute bottom-2 right-3 text-[11px] font-medium text-muted-foreground/60">
+              <div className="absolute bottom-2 right-3 text-[11px] font-semibold text-white/80 drop-shadow">
                 Hover to flip →
               </div>
             </Link>
           </Card>
 
           {/* Back Face */}
-          <Card className="absolute inset-0 overflow-hidden border-primary/20 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+          <Card className="flip-face flip-face--back overflow-hidden border-primary/20">
             <div className="flex h-full flex-col p-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
@@ -248,7 +248,7 @@ export default function CarCard({ car, index = 0 }: CarCardProps) {
                 </div>
               )}
 
-              <div className="mt-auto pt-2 text-center text-[10px] text-muted-foreground/40">
+              <div className="mt-auto pt-2 text-center text-[10px] font-medium text-muted-foreground">
                 Hover to flip back
               </div>
             </div>

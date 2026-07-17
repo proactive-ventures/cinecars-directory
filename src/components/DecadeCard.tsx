@@ -18,12 +18,12 @@ export default function DecadeCard({ decade }: DecadeCardProps) {
     >
       <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-primary/20 via-surface to-secondary/10">
         <div className="flex flex-col items-center gap-2">
-          <Calendar className="h-10 w-10 text-white/15" />
-          <span className="font-heading text-5xl font-bold text-white/20">
+          <Calendar className="h-10 w-10 text-white/60" />
+          <span className="font-heading text-5xl font-bold text-white">
             {decade.name}
           </span>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
+        <div className="img-scrim pointer-events-none absolute inset-0" />
       </div>
 
       <div className="p-4">
@@ -32,7 +32,7 @@ export default function DecadeCard({ decade }: DecadeCardProps) {
         </h3>
 
         {decade.description && (
-          <p className="mt-1.5 text-sm leading-relaxed text-muted line-clamp-2">
+          <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground line-clamp-2">
             {decade.description}
           </p>
         )}

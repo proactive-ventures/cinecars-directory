@@ -104,7 +104,7 @@ export default function FeaturedCarousel({ cars }: FeaturedCarouselProps) {
                       {initials}
                     </span>
                   )}
-                  <div className="absolute right-2 top-2 rounded-full bg-secondary/20 px-2 py-0.5 text-[10px] font-medium text-secondary backdrop-blur-sm">
+                  <div className="absolute right-2 top-2 z-10 rounded-full bg-background/80 px-2 py-0.5 text-[10px] font-semibold text-secondary backdrop-blur-sm">
                     Featured
                   </div>
                 </div>
@@ -113,7 +113,7 @@ export default function FeaturedCarousel({ cars }: FeaturedCarouselProps) {
                   <h3 className="font-heading text-base font-semibold text-white transition-colors group-hover:text-primary">
                     {car.name}
                   </h3>
-                  <div className="mt-1.5 flex items-center gap-3 text-xs text-muted">
+                  <div className="mt-1.5 flex items-center gap-3 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
                       {car.year}

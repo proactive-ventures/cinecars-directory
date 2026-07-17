@@ -38,7 +38,7 @@ export const tvSeries: TVSeries[] = [
     network: "NBC",
     description: "Undercover detectives Sonny Crockett and Rico Tubbs patrol the mean streets of Miami in pastel suits and a white Ferrari Testarossa. The show defined 1980s style with its neon-noir aesthetic and synth-heavy soundtrack.",
     image: "/images/tv-series/miami-vice.jpg",
-    carIds: ["testarossa-1986"]
+    carIds: ["testarossa-1986", "daytona-spyder-1986", "cadillac-deville-1964"]
   },
   {
     id: "magnum-pi",
