@@ -6,7 +6,7 @@ import { Search, SlidersHorizontal, X, SearchCode, LayoutGrid, Columns3, Columns
 import CarCard from "@/components/CarCard"
 import CarCardSkeleton from "@/components/CarCardSkeleton"
 import { cars } from "@/data/cars"
-import { SITE_URL, decades, bodyTypes, mediaTypes } from "@/lib/constants"
+import { SITE_NAME, SITE_URL, decades, bodyTypes, mediaTypes } from "@/lib/constants"
 import {
   Select,
   SelectContent,
@@ -244,10 +244,22 @@ function CarsPageContent() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: "Cars", item: `${SITE_URL}/cars` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "CollectionPage",
-            name: "All Cars | CineCars Directory",
-            description:
-              "Browse our complete collection of iconic cars from movies and TV series.",
+            name: `Browse ${cars.length} Iconic Cars | ${SITE_NAME}`,
+            description: `Browse all ${cars.length} iconic cars, trucks, and motorcycles from movies and TV series. Filter by make, decade, body type, and more.`,
             url: `${SITE_URL}/cars`,
             mainEntity: {
               "@type": "ItemList",

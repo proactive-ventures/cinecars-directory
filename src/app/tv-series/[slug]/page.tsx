@@ -20,14 +20,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const series = tvSeries.find((s) => s.slug === slug)
   if (!series) return {}
+  const seriesCarsCount = cars.filter((car) =>
+    car.appearances.some(
+      (a) =>
+        a.title.toLowerCase().replace(/\s+/g, "-") === slug &&
+        (a.mediaType === "tv-series" || a.mediaType === "animated-series"),
+    ),
+  ).length
   return {
-    title: `${series.title} – Cars`,
-    description: series.description,
+    title: `${series.title} (${series.years}) – Cars & Vehicles`,
+    description: `${seriesCarsCount} iconic cars and vehicles featured in ${series.title} (${series.years}). Explore complete specs, images, and cultural impact.`,
+    keywords: [series.title, series.years, "TV series cars", "iconic vehicles", `${series.title} cars`, `${series.title} vehicles`].filter(Boolean) as string[],
+    robots: { index: true, follow: true },
     openGraph: {
-      title: `${series.title} – ${SITE_NAME}`,
-      description: series.description,
+      title: `${series.title} (${series.years}) – ${SITE_NAME}`,
+      description: `${seriesCarsCount} cars featured in ${series.title}. Browse specs, images, and cultural impact.`,
       url: `${SITE_URL}/tv-series/${series.slug}`,
-      ...(series.image ? { images: [{ url: `${SITE_URL}${series.image}` }] } : {}),
+      siteName: SITE_NAME,
+      locale: "en_US",
+      type: "website",
+      ...(series.image ? { images: [{ url: `${SITE_URL}${series.image}`, width: 1200, height: 630, alt: series.title }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${series.title} (${series.years}) – ${SITE_NAME}`,
+      description: `${seriesCarsCount} cars featured in ${series.title}.`,
+      ...(series.image ? { images: [`${SITE_URL}${series.image}`] } : {}),
     },
     alternates: {
       canonical: `${SITE_URL}/tv-series/${series.slug}`,
@@ -52,6 +70,22 @@ export default async function TVSeriesDetailPage({ params }: Props) {
 
   return (
     <>
+      {/* BreadcrumbList structured data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: "TV Series", item: `${SITE_URL}/tv-series` },
+              { "@type": "ListItem", position: 3, name: series.title, item: `${SITE_URL}/tv-series/${series.slug}` },
+            ],
+          }),
+        }}
+      />
+      {/* TVSeries structured data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -61,7 +95,36 @@ export default async function TVSeriesDetailPage({ params }: Props) {
             name: series.title,
             description: series.description,
             url: `${SITE_URL}/tv-series/${series.slug}`,
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `${SITE_URL}/tv-series/${series.slug}`,
+            },
             datePublished: series.years,
+            ...(series.image ? { image: `${SITE_URL}${series.image}` } : {}),
+            ...(series.network ? { productionCompany: series.network } : {}),
+            ...(seriesCars.length > 0 ? {
+              hasPart: seriesCars.map((c) => ({
+                "@type": "Vehicle",
+                name: c.name,
+                url: `${SITE_URL}/cars/${c.slug}`,
+              })),
+            } : {}),
+          }),
+        }}
+      />
+      {/* Speakable annotation for voice/AEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: `${series.title} (${series.years})`,
+            description: series.description,
+            speakable: {
+              "@type": "SpeakableSpecification",
+              cssSelector: ["h1", "h2", ".speakable"],
+            },
           }),
         }}
       />

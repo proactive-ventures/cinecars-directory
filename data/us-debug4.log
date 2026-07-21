@@ -1,0 +1,8 @@
+contains 'Horsepower'? false
+contains '7206'? false
+contains 'Engine displacement'? false
+hp match: null
+disp match: null
+loose PS: undefined
+loose cm3: undefined
+KEY SPECS present? false

@@ -25,6 +25,25 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   metadataBase: new URL(SITE_URL),
+  keywords: [
+    "movie cars", "iconic vehicles", "cinema cars", "TV series cars",
+    "James Bond cars", "Fast and Furious cars", "Batman vehicles",
+    "Knight Rider KITT", "Back to the Future DeLorean", "car database",
+    "movie vehicle directory", "automotive cinema",
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  authors: [{ name: SITE_NAME }],
+  publisher: SITE_NAME,
   openGraph: {
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
@@ -32,11 +51,13 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: "en_US",
     type: "website",
+    images: [{ url: `${SITE_URL}/images/og-default.jpg`, width: 1200, height: 630, alt: SITE_NAME }],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
+    images: [`${SITE_URL}/images/og-default.jpg`],
   },
   alternates: {
     canonical: SITE_URL,
@@ -72,6 +93,10 @@ export default function RootLayout({
               url: SITE_URL,
               description: SITE_DESCRIPTION,
               foundingDate: "2026",
+              sameAs: [
+                "https://github.com/proactive-ventures/cinecars-directory",
+              ],
+              knowsAbout: ["Movie cars", "Iconic vehicles", "Automotive cinema", "Vehicle specifications"],
             }),
           }}
         />
@@ -85,6 +110,13 @@ export default function RootLayout({
               name: SITE_NAME,
               url: SITE_URL,
               description: SITE_DESCRIPTION,
+              inLanguage: "en-US",
+              isAccessibleForFree: true,
+              about: {
+                "@type": "Thing",
+                name: "Movie and TV vehicles",
+                description: "Directory of iconic cars from films and television",
+              },
               potentialAction: {
                 "@type": "SearchAction",
                 target: {
@@ -92,6 +124,22 @@ export default function RootLayout({
                   urlTemplate: `${SITE_URL}/cars?q={search_term_string}`,
                 },
                 "query-input": "required name=search_term_string",
+              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          id="speakable-schema"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebPage",
+              name: SITE_NAME,
+              description: SITE_DESCRIPTION,
+              speakable: {
+                "@type": "SpeakableSpecification",
+                cssSelector: ["h1", "h2", ".speakable"],
               },
             }),
           }}

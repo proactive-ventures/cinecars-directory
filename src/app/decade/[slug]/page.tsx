@@ -52,6 +52,19 @@ export default async function DecadePage({ params }: Props) {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: decadeLabel, item: `${SITE_URL}/decade/${slug}` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "CollectionPage",
             name: `Cars from the ${decadeLabel}`,
             description: `Browse iconic cars from movies and TV series released in the ${decadeLabel}.`,
@@ -65,6 +78,7 @@ export default async function DecadePage({ params }: Props) {
                   "@type": "Vehicle",
                   name: c.name,
                   url: `${SITE_URL}/cars/${c.slug}`,
+                  ...(c.specs.horsepower ? { power: `${c.specs.horsepower} HP` } : {}),
                 },
               })),
             },

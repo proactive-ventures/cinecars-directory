@@ -1,0 +1,15 @@
+Warning: slug count (7306) != imageUrl count (7266). Using minimum.
+Turbopack build encountered 1 warnings:
+./src/app/cars/[slug]/page.tsx:15:31
+The file pattern ('/ROOT/public/' <dynamic> | '/ROOT/public' <dynamic>) matches 14136 files in [project]/
+  [90m13 |[0m
+  [90m14 |[0m [36mfunction[0m resolveImage(car: { image?: string; imageUrl?: string }): string | [36mundefined[0m {
+[31m[1m>[0m [90m15 |[0m   [36mif[0m (car.image && existsSync(path.join(process.cwd(), [32m"public"[0m, car.image))) {
+  [90m   |[0m                               [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m16 |[0m     [36mreturn[0m car.image
+  [90m17 |[0m   }
+  [90m18 |[0m   [36mreturn[0m car.imageUrl
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+

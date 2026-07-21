@@ -4,13 +4,23 @@ import { tvSeries } from "@/data/tv-series"
 import { SITE_URL } from "@/lib/constants"
 
 export const metadata = {
-  title: "TV Series",
+    title: "TV Series – Iconic Cars on Television",
+  robots: { index: true, follow: true },
   description:
-    "Browse iconic cars from your favorite TV series. Discover vehicles from Knight Rider, The Dukes of Hazzard, Supernatural, and more.",
+    `Browse ${tvSeries.length} TV series featuring iconic cars. Discover vehicles from Knight Rider, The Dukes of Hazzard, Supernatural, Miami Vice, Breaking Bad, and more. Complete specs and cultural impact.`,
+  keywords: ["TV series cars", "television vehicles", "Knight Rider KITT", "General Lee", "iconic TV cars", "Miami Vice cars", "TV vehicle database"],
   openGraph: {
-    title: "TV Series | CineCars Directory",
-    description: "Browse iconic cars from your favorite TV series.",
+    title: "TV Series – Iconic Cars on Television | CineCars Directory",
+    description: `Browse ${tvSeries.length} TV series featuring iconic cars from your favorite shows.`,
     url: `${SITE_URL}/tv-series`,
+    siteName: "CineCars Directory",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TV Series – Iconic Cars on Television | CineCars Directory",
+    description: `Browse ${tvSeries.length} TV series featuring iconic cars.`,
   },
   alternates: {
     canonical: `${SITE_URL}/tv-series`,
@@ -25,9 +35,22 @@ export default function TVSeriesPage() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: "TV Series", item: `${SITE_URL}/tv-series` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "CollectionPage",
-            name: "TV Series | CineCars Directory",
-            description: "Browse iconic cars from your favorite TV series.",
+            name: "TV Series – Iconic Cars on Television",
+            description: `Browse ${tvSeries.length} TV series featuring iconic cars.`,
             url: `${SITE_URL}/tv-series`,
             mainEntity: {
               "@type": "ItemList",

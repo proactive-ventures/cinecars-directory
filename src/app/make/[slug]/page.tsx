@@ -59,9 +59,22 @@ export default async function MakePage({ params }: Props) {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: `${makeName} Cars`, item: `${SITE_URL}/make/${slug}` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "CollectionPage",
-            name: `${makeName} Cars in Movies & TV`,
-            description: `Browse all ${makeName} cars featured in movies and TV series.`,
+            name: `${makeName} Cars in Movies & TV | ${SITE_NAME}`,
+            description: `Browse all ${makeName} cars featured in movies and TV series. Explore specs, appearances, and cultural impact for ${makeCars.length} iconic vehicles.`,
             url: `${SITE_URL}/make/${slug}`,
             mainEntity: {
               "@type": "ItemList",
@@ -72,6 +85,7 @@ export default async function MakePage({ params }: Props) {
                   "@type": "Vehicle",
                   name: c.name,
                   url: `${SITE_URL}/cars/${c.slug}`,
+                  ...(c.specs.horsepower ? { power: `${c.specs.horsepower} HP` } : {}),
                 },
               })),
             },

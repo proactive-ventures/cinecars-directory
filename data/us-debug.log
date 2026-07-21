@@ -1,0 +1,24 @@
+
+=== DeLorean ===
+  final url: https://www.ultimatespecs.com/car-specs/DeLorean-models
+  status: 200
+  model links: 27
+     2025 Audi Q7 2025 3.0 TDI quattro tiptronic 5-seats
+     2024 Audi Q7 2025 50 TDI quattro tiptronic 7-seats
+     2024 Audi Q7 2025 55 TFSI quattro tiptronic 7-seats
+
+=== Aston Martin ===
+  final url: https://www.ultimatespecs.com/car-specs/Aston-Martin-models
+  status: 200
+  model links: 47
+     Aston Martin DBX 707 (2022)
+     Aston Martin DBX S (2025)
+     Aston Martin DB12 Volante 4.0 V8 (2024)
+
+=== Dodge ===
+  final url: https://www.ultimatespecs.com/car-specs/Dodge-models
+  status: 200
+  model links: 47
+     Dodge Durango 2021 SRT Hellcat Brass Monkey (2025)
+     Dodge Hornet R/T PHEV (2023)
+     Dodge Charger Daytona EV R/T (2024)

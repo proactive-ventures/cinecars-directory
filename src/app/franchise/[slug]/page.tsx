@@ -52,6 +52,19 @@ export default async function FranchisePage({ params }: Props) {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: franchise.name, item: `${SITE_URL}/franchise/${franchise.slug}` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "CollectionPage",
             name: `${franchise.name} Cars | ${SITE_NAME}`,
             description: franchise.description,
@@ -65,6 +78,7 @@ export default async function FranchisePage({ params }: Props) {
                   "@type": "Vehicle",
                   name: c.name,
                   url: `${SITE_URL}/cars/${c.slug}`,
+                  ...(c.specs.horsepower ? { power: `${c.specs.horsepower} HP` } : {}),
                 },
               })),
             },

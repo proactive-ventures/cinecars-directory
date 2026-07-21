@@ -32,25 +32,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const car = cars.find((c) => c.slug === slug)
   if (!car) return {}
   const ogImage = resolveImage(car)
+  const appearanceTitles = car.appearances.map((a) => a.title)
+  const specKeywords = [
+    car.specs.engine, car.specs.horsepower ? `${car.specs.horsepower} hp` : null,
+    car.specs.topSpeed ? `${car.specs.topSpeed} mph` : null,
+    car.specs.drivetrain, car.specs.transmission, car.bodyType, car.make, car.model, String(car.year),
+  ].filter(Boolean)
   return {
-    title: `${car.name} (${car.year}) – ${car.make} ${car.model} | ${SITE_NAME}`,
+    title: `${car.name} (${car.year}) – ${car.make} ${car.model}`,
     description: car.description,
-    keywords: [car.make, car.model, String(car.year), ...car.appearances.map((a) => a.title), "movie cars", "iconic vehicles"],
+    keywords: [car.make, car.model, String(car.year), ...appearanceTitles, car.bodyType, ...specKeywords, "movie cars", "iconic vehicles", "cinema vehicles"].filter(Boolean) as string[],
+    robots: {
+      index: true,
+      follow: true,
+    },
     openGraph: {
       type: "website",
-      title: `${car.name} – ${SITE_NAME}`,
+      title: `${car.name} (${car.year}) – ${SITE_NAME}`,
       description: car.description,
       url: `${SITE_URL}/cars/${car.slug}`,
-      images: ogImage ? [{ url: ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`, alt: car.name }] : [],
+      images: ogImage ? [{ url: ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`, width: 1200, height: 630, alt: car.name }] : [],
+      siteName: SITE_NAME,
+      locale: "en_US",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${car.name} – ${SITE_NAME}`,
+      title: `${car.name} (${car.year}) – ${SITE_NAME}`,
       description: car.description,
-      images: car.image ? [`${SITE_URL}${car.image}`] : car.imageUrl ? [car.imageUrl] : [],
+      images: ogImage ? [`${ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`}`] : [],
     },
     alternates: {
       canonical: `${SITE_URL}/cars/${car.slug}`,
+    },
+    other: {
+      "article:tag": (appearanceTitles as string[]).join(","),
     },
   }
 }
@@ -92,6 +107,22 @@ export default async function CarDetailPage({ params }: Props) {
 
   return (
     <>
+      {/* BreadcrumbList structured data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: "Cars", item: `${SITE_URL}/cars` },
+              { "@type": "ListItem", position: 3, name: car.name, item: `${SITE_URL}/cars/${car.slug}` },
+            ],
+          }),
+        }}
+      />
+      {/* Vehicle structured data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -101,16 +132,58 @@ export default async function CarDetailPage({ params }: Props) {
             name: car.name,
             description: car.description,
             url: `${SITE_URL}/cars/${car.slug}`,
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `${SITE_URL}/cars/${car.slug}`,
+            },
             manufacturer: { "@type": "Organization", name: car.make },
+            brand: { "@type": "Brand", name: car.make },
+            model: car.model,
             vehicleModelDate: car.year,
+            productionDate: car.year,
             vehicleTransmission: car.specs.transmission,
             engineType: car.specs.engine,
-            productionDate: car.year,
             bodyType: car.bodyType,
-            brand: { "@type": "Brand", name: car.make },
             ...(car.specs.horsepower ? { power: `${car.specs.horsepower} HP` } : {}),
             ...(car.specs.topSpeed ? { speed: `${car.specs.topSpeed} mph` } : {}),
             ...(car.specs.weight ? { weight: `${car.specs.weight} lbs` } : {}),
+            ...(car.specs.zeroToSixty ? { accelerationTime: `${car.specs.zeroToSixty} seconds` } : {}),
+            ...(car.specs.drivetrain ? { driveWheelConfiguration: car.specs.drivetrain } : {}),
+            ...(car.funFact ? { comment: car.funFact } : {}),
+            ...(car.iconicScene ? { subjectOf: { "@type": "CreativeWork", description: car.iconicScene } } : {}),
+            image: resolveImage(car) ? {
+              "@type": "ImageObject",
+              url: resolveImage(car)!.startsWith("http") ? resolveImage(car) : `${SITE_URL}${resolveImage(car)}`,
+              ...(resolveImage(car)!.includes("upload.wikimedia.org") ? {
+                license: "https://creativecommons.org/licenses/by-sa/4.0/",
+                attribution: "Wikimedia Commons",
+              } : resolveImage(car)!.includes("imcdb.org") ? {
+                attribution: "IMCDb.org",
+              } : {}),
+            } : undefined,
+            ...(car.appearances.length > 0 ? {
+              subjectOf: car.appearances.map((a) => ({
+                "@type": a.mediaType === "movie" || a.mediaType === "animated-film" ? "Movie" : "TVSeries",
+                name: a.title,
+                url: `${SITE_URL}/${a.mediaType === "movie" || a.mediaType === "animated-film" ? "movies" : "tv-series"}/${a.title.toLowerCase().replace(/\s+/g, "-")}`,
+              })),
+            } : {}),
+          }),
+        }}
+      />
+      {/* Speakable annotation for voice/AEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: `${car.name} (${car.year})`,
+            description: car.description,
+            speakable: {
+              "@type": "SpeakableSpecification",
+              cssSelector: ["h1", "h2", ".speakable"],
+            },
           }),
         }}
       />

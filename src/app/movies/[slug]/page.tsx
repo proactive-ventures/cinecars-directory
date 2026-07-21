@@ -20,14 +20,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const movie = movies.find((m) => m.slug === slug)
   if (!movie) return {}
+  const movieCarsCount = cars.filter((car) =>
+    car.appearances.some(
+      (a) =>
+        a.title.toLowerCase().replace(/\s+/g, "-") === slug &&
+        (a.mediaType === "movie" || a.mediaType === "animated-film"),
+    ),
+  ).length
   return {
-    title: `${movie.title} (${movie.year}) – Cars`,
-    description: movie.description,
+    title: `${movie.title} (${movie.year}) – Cars & Vehicles`,
+    description: `${movieCarsCount} iconic cars and vehicles featured in ${movie.title} (${movie.year})${movie.director ? `, directed by ${movie.director}` : ''}. Explore complete specs, images, and cultural impact.`,
+    keywords: [movie.title, String(movie.year), movie.director, "movie cars", "iconic vehicles", "cinema vehicles", `${movie.title} cars`, `${movie.title} vehicles`, ...(movie.franchise ? [movie.franchise] : [])].filter(Boolean) as string[],
+    robots: { index: true, follow: true },
     openGraph: {
-      title: `${movie.title} – ${SITE_NAME}`,
-      description: movie.description,
+      title: `${movie.title} (${movie.year}) – ${SITE_NAME}`,
+      description: `${movieCarsCount} cars featured in ${movie.title}. Browse specs, images, and cultural impact.`,
       url: `${SITE_URL}/movies/${movie.slug}`,
-      ...(movie.image ? { images: [{ url: `${SITE_URL}${movie.image}` }] } : {}),
+      siteName: SITE_NAME,
+      locale: "en_US",
+      type: "website",
+      ...(movie.image ? { images: [{ url: `${SITE_URL}${movie.image}`, width: 1200, height: 630, alt: movie.title }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${movie.title} (${movie.year}) – ${SITE_NAME}`,
+      description: `${movieCarsCount} cars featured in ${movie.title}.`,
+      ...(movie.image ? { images: [`${SITE_URL}${movie.image}`] } : {}),
     },
     alternates: {
       canonical: `${SITE_URL}/movies/${movie.slug}`,
@@ -52,6 +70,22 @@ export default async function MovieDetailPage({ params }: Props) {
 
   return (
     <>
+      {/* BreadcrumbList structured data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: "Movies", item: `${SITE_URL}/movies` },
+              { "@type": "ListItem", position: 3, name: movie.title, item: `${SITE_URL}/movies/${movie.slug}` },
+            ],
+          }),
+        }}
+      />
+      {/* Movie structured data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -61,8 +95,44 @@ export default async function MovieDetailPage({ params }: Props) {
             name: movie.title,
             description: movie.description,
             url: `${SITE_URL}/movies/${movie.slug}`,
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `${SITE_URL}/movies/${movie.slug}`,
+            },
             datePublished: movie.year,
             ...(movie.director ? { director: { "@type": "Person", name: movie.director } } : {}),
+            ...(movie.image ? { image: `${SITE_URL}${movie.image}` } : {}),
+            ...(movieCars.length > 0 ? {
+              hasPart: movieCars.map((c) => ({
+                "@type": "Vehicle",
+                name: c.name,
+                url: `${SITE_URL}/cars/${c.slug}`,
+              })),
+            } : {}),
+            ...(movieCars.length > 0 ? {
+              about: movieCars.map((c) => ({
+                "@type": "Vehicle",
+                name: c.name,
+                url: `${SITE_URL}/cars/${c.slug}`,
+              })),
+            } : {}),
+            ...(movie.franchise ? { partOfSeries: { "@type": "Series", name: movie.franchise } } : {}),
+          }),
+        }}
+      />
+      {/* Speakable annotation for voice/AEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: `${movie.title} (${movie.year})`,
+            description: movie.description,
+            speakable: {
+              "@type": "SpeakableSpecification",
+              cssSelector: ["h1", "h2", ".speakable"],
+            },
           }),
         }}
       />

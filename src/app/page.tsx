@@ -25,9 +25,13 @@ export default function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            name: `${SITE_NAME} Home`,
+            name: `${SITE_NAME} – ${SITE_DESCRIPTION}`,
             description: SITE_DESCRIPTION,
             url: SITE_URL,
+            about: {
+              "@type": "Thing",
+              name: "Iconic movie and TV vehicles",
+            },
             mainEntity: {
               "@type": "ItemList",
               itemListElement: featuredCars.map((car, i) => ({
@@ -37,9 +41,68 @@ export default function HomePage() {
                   "@type": "Vehicle",
                   name: car.name,
                   url: `${SITE_URL}/cars/${car.slug}`,
+                  description: car.description,
+                  ...(car.specs.horsepower ? { power: `${car.specs.horsepower} HP` } : {}),
                 },
               })),
             },
+            hasPart: [
+              { "@type": "SiteNavigationElement", name: "Cars", url: `${SITE_URL}/cars` },
+              { "@type": "SiteNavigationElement", name: "Movies", url: `${SITE_URL}/movies` },
+              { "@type": "SiteNavigationElement", name: "TV Series", url: `${SITE_URL}/tv-series` },
+            ],
+          }),
+        }}
+      />
+      {/* FAQPage schema for AEO (Answer Engine Optimization) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "What is CineCars Directory?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "CineCars Directory is the ultimate database of iconic vehicles from movies and TV series. We catalog over 7,000 cars, trucks, motorcycles, and other vehicles with complete specifications, film appearances, and cultural impact information.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "What cars appear in Fast and Furious?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "The Fast and Furious franchise features hundreds of iconic cars including the 1970 Dodge Charger R/T driven by Dominic Toretto, the 1995 Mitsubishi Eclipse driven by Brian O'Conner, the Toyota Supra MK4, Nissan Skyline GT-R, and many more. Browse all Fast and Furious cars on CineCars Directory.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "What is James Bond's car?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "James Bond is most famously associated with the silver Aston Martin DB5, which first appeared in Goldfinger (1964). It was equipped with gadgets including ejector seats, machine guns, and an oil slick dispenser. Bond has also driven many other vehicles across 25+ films.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "What was the car in Back to the Future?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "The DeLorean DMC-12 was the iconic time machine from Back to the Future. Built from a 1981 DeLorean sports car, it was modified by Doc Brown with a flux capacitor to travel through time, reaching 88 mph to activate time travel.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Where can I find movie car specifications?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "CineCars Directory provides detailed specifications for thousands of movie and TV vehicles, including horsepower, engine type, top speed, 0-60 times, transmission, drivetrain, and weight. Each vehicle page also lists its appearances across films and television.",
+                },
+              },
+            ],
           }),
         }}
       />

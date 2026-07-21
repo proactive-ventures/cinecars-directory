@@ -4,14 +4,23 @@ import { movies } from "@/data/movies"
 import { SITE_URL } from "@/lib/constants"
 
 export const metadata = {
-  title: "Movies",
+    title: "Movies – Iconic Cars in Cinema",
+  robots: { index: true, follow: true },
   description:
-    "Browse iconic cars from your favorite movies. Discover vehicles from Fast & Furious, James Bond, Batman, and more.",
+    `Browse ${movies.length} movies featuring iconic cars. Discover vehicles from Fast & Furious, James Bond, Batman, Knight Rider, and more. Complete vehicle specs and cultural impact.`,
+  keywords: ["movie cars", "cinema vehicles", "iconic film cars", "James Bond cars", "Fast and Furious", "Batmobile", "movie vehicle database", "film automobiles"],
   openGraph: {
-    title: "Movies | CineCars Directory",
-    description:
-      "Browse iconic cars from your favorite movies.",
+    title: "Movies – Iconic Cars in Cinema | CineCars Directory",
+    description: `Browse ${movies.length} movies featuring iconic cars. Discover vehicles from your favorite films.`,
     url: `${SITE_URL}/movies`,
+    siteName: "CineCars Directory",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Movies – Iconic Cars in Cinema | CineCars Directory",
+    description: `Browse ${movies.length} movies featuring iconic cars.`,
   },
   alternates: {
     canonical: `${SITE_URL}/movies`,
@@ -26,9 +35,22 @@ export default function MoviesPage() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: "Movies", item: `${SITE_URL}/movies` },
+            ],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
             "@type": "CollectionPage",
-            name: "Movies | CineCars Directory",
-            description: "Browse iconic cars from your favorite movies.",
+            name: "Movies – Iconic Cars in Cinema",
+            description: `Browse ${movies.length} movies featuring iconic cars.`,
             url: `${SITE_URL}/movies`,
             mainEntity: {
               "@type": "ItemList",

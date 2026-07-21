@@ -1,0 +1,4 @@
+Warning: slug count (7306) != imageUrl count (7266). Using minimum.
+⚠ Slow filesystem detected. The benchmark took 373ms. If E:\Sovereign_Vault\cinecars-directory\.next/dev is a network drive, consider moving it to a local folder.
+See more: https://nextjs.org/docs/app/guides/local-development
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
