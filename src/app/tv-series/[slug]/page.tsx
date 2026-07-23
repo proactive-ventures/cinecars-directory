@@ -39,13 +39,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: SITE_NAME,
       locale: "en_US",
       type: "website",
-      ...(series.image ? { images: [{ url: `${SITE_URL}${series.image}`, width: 1200, height: 630, alt: series.title }] } : {}),
+      ...(series.image || series.imageUrl ? { images: [{ url: series.imageUrl || `${SITE_URL}${series.image}`, width: 1200, height: 630, alt: series.title }] } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title: `${series.title} (${series.years}) – ${SITE_NAME}`,
       description: `${seriesCarsCount} cars featured in ${series.title}.`,
-      ...(series.image ? { images: [`${SITE_URL}${series.image}`] } : {}),
+      ...(series.image || series.imageUrl ? { images: [series.imageUrl || `${SITE_URL}${series.image}`] } : {}),
     },
     alternates: {
       canonical: `${SITE_URL}/tv-series/${series.slug}`,
@@ -66,7 +66,7 @@ export default async function TVSeriesDetailPage({ params }: Props) {
     ),
   )
 
-  const attribution = getImageAttribution(series.image)
+  const attribution = getImageAttribution(series.imageUrl || series.image)
 
   return (
     <>
@@ -100,7 +100,7 @@ export default async function TVSeriesDetailPage({ params }: Props) {
               "@id": `${SITE_URL}/tv-series/${series.slug}`,
             },
             datePublished: series.years,
-            ...(series.image ? { image: `${SITE_URL}${series.image}` } : {}),
+            ...(series.image || series.imageUrl ? { image: series.imageUrl || `${SITE_URL}${series.image}` } : {}),
             ...(series.network ? { productionCompany: series.network } : {}),
             ...(seriesCars.length > 0 ? {
               hasPart: seriesCars.map((c) => ({
@@ -156,9 +156,9 @@ export default async function TVSeriesDetailPage({ params }: Props) {
         <section className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="overflow-hidden rounded-2xl border border-border/50">
             <div className="relative aspect-[21/9] bg-gradient-to-br from-surface-light via-surface to-surface flex items-center justify-center">
-              {series.image && (
+              {(series.image || series.imageUrl) && (
                 <img
-                  src={series.image}
+                  src={series.image || series.imageUrl}
                   alt={series.title}
                   className="absolute inset-0 h-full w-full object-cover"
                 />
@@ -166,14 +166,14 @@ export default async function TVSeriesDetailPage({ params }: Props) {
               <div className="img-scrim pointer-events-none absolute inset-0" />
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(220,38,38,0.12)_0%,transparent_60%)]" />
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(245,158,11,0.08)_0%,transparent_60%)]" />
-              {!series.image && (
+              {!series.image && !series.imageUrl && (
                 <Tv className="relative z-10 h-24 w-24 text-primary/30" />
               )}
             </div>
           </div>
         </section>
 
-        {series.image && (
+        {(series.image || series.imageUrl) && (
           <div className="mx-auto max-w-7xl px-4 pb-2 sm:px-6 lg:px-8">
             <p className="text-xs text-muted">
               Image: {attribution.source}

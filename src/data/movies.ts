@@ -7,6 +7,7 @@ export interface Movie {
   franchise?: string
   description: string
   image: string
+  imageUrl?: string
   carIds: string[]
 }
 
@@ -245,6 +246,7 @@ export const movies: Movie[] = [
     director: "John Carpenter",
     description: "A nerdy teenager named Arnie Cunningham buys a 1958 Plymouth Fury that turns out to be a jealous, murderous entity with the power to repair itself. The car soon possesses Arnie and begins killing anyone who threatens their bond.",
     image: "/images/movies/christine-1983.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/9c/Christine.jpg",
     carIds: ["christine-1958"]
   },
   {

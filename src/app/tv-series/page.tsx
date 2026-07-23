@@ -86,15 +86,15 @@ export default function TVSeriesPage() {
               className="group glass rounded-xl border border-border/50 overflow-hidden transition-all hover:border-primary/30 hover:shadow-[0_0_20px_rgba(220,38,38,0.15)]"
             >
               <div className="relative aspect-[16/9] flex items-center justify-center overflow-hidden">
-                {series.image && (
+                {(series.image || series.imageUrl) && (
                   <img
-                    src={series.image}
+                    src={series.image || series.imageUrl}
                     alt={series.title}
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 )}
                 <div className="img-scrim pointer-events-none absolute inset-0" />
-                {!series.image && (
+                {!series.image && !series.imageUrl && (
                   <>
                     <div className="absolute inset-0 bg-gradient-to-br from-surface-light via-surface to-surface" />
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(220,38,38,0.08)_0%,transparent_60%)]" />

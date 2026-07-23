@@ -4,6 +4,7 @@ import "./globals.css"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 import BackToTop from "@/components/BackToTop"
+import ThemeProvider from "@/components/ThemeProvider"
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/lib/constants"
 
 const inter = Inter({
@@ -78,10 +79,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${oswald.variable}`}
+      className={`${inter.variable} ${oswald.variable} dark`}
       suppressHydrationWarning
     >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("cinecars-theme");if(t==="light"||t==="dark"){document.documentElement.classList.add(t)}}catch(e){}})()`,
+          }}
+        />
         <script
           type="application/ld+json"
           id="organization-schema"
@@ -146,10 +152,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col bg-background text-foreground font-body antialiased">
-        <Header />
-        <main className="flex-1 pt-16">{children}</main>
-        <Footer />
-        <BackToTop />
+        <ThemeProvider>
+          <Header />
+          <main className="flex-1 pt-16">{children}</main>
+          <Footer />
+          <BackToTop />
+        </ThemeProvider>
       </body>
     </html>
   )

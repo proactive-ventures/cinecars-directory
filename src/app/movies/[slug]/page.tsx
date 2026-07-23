@@ -39,13 +39,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: SITE_NAME,
       locale: "en_US",
       type: "website",
-      ...(movie.image ? { images: [{ url: `${SITE_URL}${movie.image}`, width: 1200, height: 630, alt: movie.title }] } : {}),
+      ...(movie.image || movie.imageUrl ? { images: [{ url: movie.imageUrl || `${SITE_URL}${movie.image}`, width: 1200, height: 630, alt: movie.title }] } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title: `${movie.title} (${movie.year}) – ${SITE_NAME}`,
       description: `${movieCarsCount} cars featured in ${movie.title}.`,
-      ...(movie.image ? { images: [`${SITE_URL}${movie.image}`] } : {}),
+      ...(movie.image || movie.imageUrl ? { images: [movie.imageUrl || `${SITE_URL}${movie.image}`] } : {}),
     },
     alternates: {
       canonical: `${SITE_URL}/movies/${movie.slug}`,
@@ -66,7 +66,7 @@ export default async function MovieDetailPage({ params }: Props) {
     ),
   )
 
-  const attribution = getImageAttribution(movie.image)
+  const attribution = getImageAttribution(movie.imageUrl || movie.image)
 
   return (
     <>
@@ -101,7 +101,7 @@ export default async function MovieDetailPage({ params }: Props) {
             },
             datePublished: movie.year,
             ...(movie.director ? { director: { "@type": "Person", name: movie.director } } : {}),
-            ...(movie.image ? { image: `${SITE_URL}${movie.image}` } : {}),
+            ...(movie.image || movie.imageUrl ? { image: movie.imageUrl || `${SITE_URL}${movie.image}` } : {}),
             ...(movieCars.length > 0 ? {
               hasPart: movieCars.map((c) => ({
                 "@type": "Vehicle",
@@ -164,9 +164,9 @@ export default async function MovieDetailPage({ params }: Props) {
         <section className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="overflow-hidden rounded-2xl border border-border/50">
             <div className="relative aspect-[21/9] bg-gradient-to-br from-surface-light via-surface to-surface flex items-center justify-center">
-              {movie.image && (
+              {(movie.image || movie.imageUrl) && (
                 <img
-                  src={movie.image}
+                  src={movie.image || movie.imageUrl}
                   alt={`${movie.title} (${movie.year})`}
                   className="absolute inset-0 h-full w-full object-cover"
                 />
@@ -174,14 +174,14 @@ export default async function MovieDetailPage({ params }: Props) {
               <div className="img-scrim pointer-events-none absolute inset-0" />
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(220,38,38,0.12)_0%,transparent_60%)]" />
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(245,158,11,0.08)_0%,transparent_60%)]" />
-              {!movie.image && (
+              {!movie.image && !movie.imageUrl && (
                 <Film className="relative z-10 h-24 w-24 text-primary/30" />
               )}
             </div>
           </div>
         </section>
 
-        {movie.image && (
+        {(movie.image || movie.imageUrl) && (
           <div className="mx-auto max-w-7xl px-4 pb-2 sm:px-6 lg:px-8">
             <p className="text-xs text-muted">
               Image: {attribution.source}

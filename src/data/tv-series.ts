@@ -6,6 +6,7 @@ export interface TVSeries {
   network?: string
   description: string
   image: string
+  imageUrl?: string
   carIds: string[]
 }
 
@@ -128,6 +129,7 @@ export const tvSeries: TVSeries[] = [
     network: "NBC",
     description: "Private investigator Jim Rockford solves cases from his mobile home in Malibu. His gold 1974 Pontiac Firebird Formula 400 was his loyal companion through car chases, stakeouts, and narrow escapes from angry clients.",
     image: "/images/tv-series/rockford-files.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/6/62/James_Garner_James_Whitmore_Jr._Rockford_Files_1977.JPG",
     carIds: []
   },
   {
@@ -158,6 +160,7 @@ export const tvSeries: TVSeries[] = [
     network: "BBC",
     description: "The world's most popular motoring show features high-octane challenges, celebrity guests, and the iconic trio of presenters. The show has created countless memorable automotive moments and influenced car culture worldwide.",
     image: "/images/tv-series/top-gear.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/7/79/Top_Gear_logo.jpg",
     carIds: []
   }
 ]

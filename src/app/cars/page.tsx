@@ -1,8 +1,8 @@
 "use client"
 
-import { Suspense, useMemo, useState, useCallback, useEffect } from "react"
+import { Suspense, useMemo, useState, useCallback, useEffect, useRef } from "react"
 import { useSearchParams, useRouter, usePathname } from "next/navigation"
-import { Search, SlidersHorizontal, X, SearchCode, LayoutGrid, Columns3, Columns4, ArrowUpDown } from "lucide-react"
+import { Search, SlidersHorizontal, X, SearchCode, LayoutGrid, Columns3, Columns4, ArrowUpDown, Infinity } from "lucide-react"
 import CarCard from "@/components/CarCard"
 import CarCardSkeleton from "@/components/CarCardSkeleton"
 import { cars } from "@/data/cars"
@@ -43,7 +43,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 
-const CARS_PER_PAGE = 20
+const CARS_PER_PAGE = 48
 const SKELETON_COUNT = 8
 
 type SortKey = "relevance" | "name-asc" | "name-desc" | "year-desc" | "year-asc" | "appearances"
@@ -118,6 +118,9 @@ function CarsPageContent() {
   const [sortKey, setSortKey] = useState<SortKey>((searchParams.get("sort") as SortKey) || "relevance")
   const [gridDensity, setGridDensity] = useState<GridDensity>(getGridDensity)
   const [loading, setLoading] = useState(false)
+  const [infinite, setInfinite] = useState(false)
+  const [loaded, setLoaded] = useState(CARS_PER_PAGE)
+  const sentinelRef = useRef<HTMLDivElement>(null)
 
   const updateURL = useCallback(
     (newFilters: Filters, newPage: number, newSort?: SortKey) => {
@@ -178,7 +181,14 @@ function CarsPageContent() {
           c.name.toLowerCase().includes(q) ||
           c.make.toLowerCase().includes(q) ||
           c.model.toLowerCase().includes(q) ||
-          c.description.toLowerCase().includes(q),
+          c.description.toLowerCase().includes(q) ||
+          (c.specs.engine && c.specs.engine.toLowerCase().includes(q)) ||
+          (c.specs.transmission && c.specs.transmission.toLowerCase().includes(q)) ||
+          (c.specs.drivetrain && c.specs.drivetrain.toLowerCase().includes(q)) ||
+          (c.specs.horsepower && String(c.specs.horsepower).includes(q)) ||
+          (c.specs.topSpeed && String(c.specs.topSpeed).includes(q)) ||
+          (c.specs.zeroToSixty !== undefined && String(c.specs.zeroToSixty).includes(q)) ||
+          (c.bodyType && c.bodyType.toLowerCase().includes(q)),
       )
     }
     if (filters.decade) {
@@ -236,6 +246,28 @@ function CarsPageContent() {
       return () => clearTimeout(timer)
     }
   }, [loading, page, filters, sortKey])
+
+  // Intersection observer for infinite scroll
+  useEffect(() => {
+    if (!infinite) return
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && loaded < filtered.length) {
+          setLoaded((prev) => Math.min(prev + CARS_PER_PAGE, filtered.length))
+        }
+      },
+      { rootMargin: "200px" },
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [infinite, loaded, filtered.length])
+
+  // Reset loaded count when filters change or switching to infinite
+  useEffect(() => {
+    setLoaded(CARS_PER_PAGE)
+  }, [filters, sortKey, infinite])
 
   return (
     <>
@@ -337,6 +369,27 @@ function CarsPageContent() {
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Infinite Scroll Toggle */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => setInfinite((prev) => !prev)}
+                    className={`flex items-center justify-center h-10 w-10 rounded-lg border text-xs transition-colors ${
+                      infinite
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-card text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Infinity className="h-4 w-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>{infinite ? "Switch to Pagination" : "Infinite Scroll"}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             {/* Grid Density Toggle */}
             <TooltipProvider>
@@ -488,92 +541,132 @@ function CarsPageContent() {
 
         <div className="flex flex-col gap-8">
           <div className="flex-1">
-            <p className="mb-4 text-sm text-muted-foreground">
-              Showing {(page - 1) * CARS_PER_PAGE + 1}–
-              {Math.min(page * CARS_PER_PAGE, filtered.length)} of{" "}
-              {filtered.length} results
-            </p>
-
-            {paginated.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-24">
-                <SearchCode className="h-12 w-12 text-muted-foreground" />
-                <h3 className="mt-4 font-heading text-xl font-bold text-foreground">
-                  No cars found
-                </h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Try adjusting your search or filter criteria
+            {infinite ? (
+              <>
+                <p className="mb-4 text-sm text-muted-foreground">
+                  Showing {Math.min(loaded, filtered.length)} of{" "}
+                  {filtered.length} results
                 </p>
-                <Button onClick={clearFilters} className="mt-4">
-                  Clear Filters
-                </Button>
-              </div>
-            ) : loading ? (
-              <div className={`grid gap-6 ${gridClasses[gridDensity]}`}>
-                {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-                  <CarCardSkeleton key={i} />
-                ))}
-              </div>
+                {filtered.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-24">
+                    <SearchCode className="h-12 w-12 text-muted-foreground" />
+                    <h3 className="mt-4 font-heading text-xl font-bold text-foreground">
+                      No cars found
+                    </h3>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Try adjusting your search or filter criteria
+                    </p>
+                    <Button onClick={clearFilters} className="mt-4">
+                      Clear Filters
+                    </Button>
+                  </div>
+                ) : (
+                  <div className={`grid gap-6 ${gridClasses[gridDensity]}`}>
+                    {filtered.slice(0, loaded).map((car, i) => (
+                      <CarCard key={car.slug} car={car} index={i} />
+                    ))}
+                  </div>
+                )}
+                <div ref={sentinelRef} className="h-4" />
+                {loaded < filtered.length && (
+                  <div className="mt-6 flex justify-center">
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                  </div>
+                )}
+                {loaded >= filtered.length && filtered.length > 0 && (
+                  <p className="mt-8 text-center text-xs text-muted-foreground">
+                    All {filtered.length} {filtered.length === 1 ? "car" : "cars"} loaded
+                  </p>
+                )}
+              </>
             ) : (
-              <div className={`grid gap-6 ${gridClasses[gridDensity]}`}>
-                {paginated.map((car, i) => (
-                  <CarCard key={car.slug} car={car} index={i} />
-                ))}
-              </div>
-            )}
-
-            {totalPages > 1 && (
-              <div className="mt-12 flex justify-center">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          if (page > 1) handlePageChange(page - 1)
-                        }}
-                        className={page === 1 ? "pointer-events-none opacity-50" : ""}
-                      />
-                    </PaginationItem>
-                    {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-                      let pageNum: number
-                      if (totalPages <= 7) {
-                        pageNum = i + 1
-                      } else if (page <= 4) {
-                        pageNum = i + 1
-                      } else if (page >= totalPages - 3) {
-                        pageNum = totalPages - 6 + i
-                      } else {
-                        pageNum = page - 3 + i
-                      }
-                      return (
-                        <PaginationItem key={pageNum}>
-                          <PaginationLink
+              <>
+                <p className="mb-4 text-sm text-muted-foreground">
+                  Showing {(page - 1) * CARS_PER_PAGE + 1}–
+                  {Math.min(page * CARS_PER_PAGE, filtered.length)} of{" "}
+                  {filtered.length} results
+                </p>
+                {paginated.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-24">
+                    <SearchCode className="h-12 w-12 text-muted-foreground" />
+                    <h3 className="mt-4 font-heading text-xl font-bold text-foreground">
+                      No cars found
+                    </h3>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Try adjusting your search or filter criteria
+                    </p>
+                    <Button onClick={clearFilters} className="mt-4">
+                      Clear Filters
+                    </Button>
+                  </div>
+                ) : loading ? (
+                  <div className={`grid gap-6 ${gridClasses[gridDensity]}`}>
+                    {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+                      <CarCardSkeleton key={i} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className={`grid gap-6 ${gridClasses[gridDensity]}`}>
+                    {paginated.map((car, i) => (
+                      <CarCard key={car.slug} car={car} index={i} />
+                    ))}
+                  </div>
+                )}
+                {totalPages > 1 && (
+                  <div className="mt-12 flex justify-center">
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
                             href="#"
-                            isActive={pageNum === page}
                             onClick={(e) => {
                               e.preventDefault()
-                              handlePageChange(pageNum)
+                              if (page > 1) handlePageChange(page - 1)
                             }}
-                          >
-                            {pageNum}
-                          </PaginationLink>
+                            className={page === 1 ? "pointer-events-none opacity-50" : ""}
+                          />
                         </PaginationItem>
-                      )
-                    })}
-                    <PaginationItem>
-                      <PaginationNext
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          if (page < totalPages) handlePageChange(page + 1)
-                        }}
-                        className={page === totalPages ? "pointer-events-none opacity-50" : ""}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              </div>
+                        {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+                          let pageNum: number
+                          if (totalPages <= 7) {
+                            pageNum = i + 1
+                          } else if (page <= 4) {
+                            pageNum = i + 1
+                          } else if (page >= totalPages - 3) {
+                            pageNum = totalPages - 6 + i
+                          } else {
+                            pageNum = page - 3 + i
+                          }
+                          return (
+                            <PaginationItem key={pageNum}>
+                              <PaginationLink
+                                href="#"
+                                isActive={pageNum === page}
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  handlePageChange(pageNum)
+                                }}
+                              >
+                                {pageNum}
+                              </PaginationLink>
+                            </PaginationItem>
+                          )
+                        })}
+                        <PaginationItem>
+                          <PaginationNext
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              if (page < totalPages) handlePageChange(page + 1)
+                            }}
+                            className={page === totalPages ? "pointer-events-none opacity-50" : ""}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
